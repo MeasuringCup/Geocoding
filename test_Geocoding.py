@@ -121,7 +121,7 @@ class TestReverseGeocoding:
     @pytest.mark.parametrize("test_data", get_test_file("data_reverse.csv"))
     def test_reverse_geocoding(self, test_data):  # Метод с тестом на обратное геокодирование
         """Обратное геокодирование: отправляем координаты, получаем в ответе адрес, сверяем ожидаемый адрес с фактическим."""
-        street, city, country, data_lat, data_lon = test_data
+        data_lat, data_lon, street, city, country = test_data
         logging.info(f"Поиск адреса по координатам: {data_lat}, {data_lon}.")
         request = generating_request({'lat': data_lat, 'lon': data_lon, 'format': 'json'}, 'reverse')
         data_address = get_data_address(street, city, country)
@@ -132,11 +132,11 @@ class TestReverseGeocoding:
     @allure.step('Step 3: Сверка ожидаемого адреса с фактическим')
     def asserting_for_reverse_geocoding(json, data_address):
         response_address = json['display_name']
-        b = response_address.split(', ')
+        response_address = response_address.split(', ')
         flag = True
         no_match = []
         for i in range(len(data_address)):
-            if data_address[i] not in b and data_address[i] != '':
+            if data_address[i] not in response_address and data_address[i] != '':
                 no_match.append(data_address[i])
                 flag = False
         if flag == False:
