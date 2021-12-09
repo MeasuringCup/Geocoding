@@ -1,21 +1,11 @@
 import requests
 import pytest
 import logging
-import csv
 import allure
+from lib.consts import Consts
 
 logging.basicConfig(filename="main.log", level=logging.INFO, filemode="w",
                     format='%(asctime)s %(levelname)s:%(message)s')
-
-
-def get_test_file(data_file):
-    test_data = []
-    with open(data_file, newline="") as csvfile:
-        data = csv.reader(csvfile, delimiter=",")
-        next(data)
-        for row in data:
-            test_data.append(row)
-    return [test_data][0]
 
 
 def get_data_address(street, city, country):
@@ -65,7 +55,7 @@ class TestForwardSearch:
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.high
     @allure.title('High: Простое прямое геокодирование')
-    @pytest.mark.parametrize("test_data", get_test_file("data_forward.csv"))
+    @pytest.mark.parametrize("test_data", Consts.get_test_file("data_forward.csv"))
     def test_simple_forward_search(self, test_data):  # Метод с тестом на простое прямое геокодирование
         """Простое прямое геокодирование: отправляем адрес в произвольной форме, получаем ответ в виде координат, сверяем координаты из ответа с ожидаемым результатом."""
 
@@ -81,7 +71,7 @@ class TestForwardSearch:
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.critical
     @allure.title('Critical: Структурированное прямое геокодирование')
-    @pytest.mark.parametrize("test_data", get_test_file("data_forward.csv"))
+    @pytest.mark.parametrize("test_data", Consts.get_test_file("data_forward.csv"))
     def test_structured_forward_search(self, test_data):  # Метод с тестом на структурированное прямое геокодирование
         """Структурированное прямое геокодирование: отправляем адрес в виде нескольких разделённых параметров, получаем ответ в виде координат, сверяем координаты из ответа с ожидаемым результатом."""
         street, city, country, data_lat, data_lon = test_data
@@ -118,7 +108,7 @@ class TestReverseGeocoding:
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.critical
     @allure.title('Critical: Обратное геокодирование')
-    @pytest.mark.parametrize("test_data", get_test_file("data_reverse.csv"))
+    @pytest.mark.parametrize("test_data", Consts.get_test_file("data_reverse.csv"))
     def test_reverse_geocoding(self, test_data):  # Метод с тестом на обратное геокодирование
         """Обратное геокодирование: отправляем координаты, получаем в ответе адрес, сверяем ожидаемый адрес с фактическим."""
         data_lat, data_lon, street, city, country = test_data
